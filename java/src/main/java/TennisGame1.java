@@ -1,8 +1,8 @@
 
 public class TennisGame1 implements TennisGame {
-    
-    private int m_score1 = 0;
-    private int m_score2 = 0;
+
+    private static final String[] Point_names = {"Love", "Fifteen", "Thirty", "Forty"};
+    private final int[] scores = new int [2];
     private String player1Name;
     private String player2Name;
 
@@ -11,66 +11,33 @@ public class TennisGame1 implements TennisGame {
         this.player2Name = player2Name;
     }
 
+    @Override
     public void wonPoint(String playerName) {
-        if (playerName == "player1")
-            m_score1 += 1;
-        else
-            m_score2 += 1;
+        if (playerName.equals(player1Name)) {
+            scores[0]++;
+        } else if (playerName.equals(player2Name)) {
+            scores[1]++;
+        } else {
+            throw new IllegalArgumentException("Invalid player name: " + playerName);
+        }
     }
 
+    @Override
     public String getScore() {
-        String score = "";
-        int tempScore=0;
-        if (m_score1==m_score2)
-        {
-            switch (m_score1)
-            {
-                case 0:
-                        score = "Love-All";
-                    break;
-                case 1:
-                        score = "Fifteen-All";
-                    break;
-                case 2:
-                        score = "Thirty-All";
-                    break;
-                default:
-                        score = "Deuce";
-                    break;
-                
-            }
+        int p1Score = scores[0];
+        int p2Score = scores[1];
+
+        if (p1Score == p2Score){
+            return p1Score >=3 ? "Deuce" : Point_names[p1Score] + "-All";
         }
-        else if (m_score1>=4 || m_score2>=4)
-        {
-            int minusResult = m_score1-m_score2;
-            if (minusResult==1) score ="Advantage player1";
-            else if (minusResult ==-1) score ="Advantage player2";
-            else if (minusResult>=2) score = "Win for player1";
-            else score ="Win for player2";
+
+        if (p1Score>= 4 || p2Score >= 4) {
+            int scoreDifference = p1Score - p2Score;
+            String leadingPlayer = scoreDifference > 0 ? player1Name : player2Name;
+            return Math.abs(scoreDifference) == 1 ? "Advantage " + leadingPlayer : "Win for " + leadingPlayer;
         }
-        else
-        {
-            for (int i=1; i<3; i++)
-            {
-                if (i==1) tempScore = m_score1;
-                else { score+="-"; tempScore = m_score2;}
-                switch(tempScore)
-                {
-                    case 0:
-                        score+="Love";
-                        break;
-                    case 1:
-                        score+="Fifteen";
-                        break;
-                    case 2:
-                        score+="Thirty";
-                        break;
-                    case 3:
-                        score+="Forty";
-                        break;
-                }
-            }
-        }
-        return score;
+
+        return Point_names[p1Score] + "-" + Point_names[p2Score];
+
     }
 }
